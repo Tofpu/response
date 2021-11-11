@@ -1,0 +1,4 @@
+name: Response
+version: '${project.version}'
+main: io.tofpu.response.Response
+authors: [ Tofpu ]
