@@ -9,13 +9,13 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.Optional;
 
-public class AsyncChatListener implements Listener {
+public final class AsyncChatListener implements Listener {
     private final static String INVALID_FORMAT = "Invalid format. Please follow the format: #identifier:response!";
     private final static String REGISTRATION_FAILURE = "An attempt to register \"%s\" " + "response has failed. Check your console for further details.";
     private static final String REGISTRATION_SUCCESSFUL = "You have successfully " + "registered \"%s\" response!";
     private static final String MODIFICATION_SUCCESSFUL = "You have " + "successfully modified \"%s\" response!";
     private final static String MODIFICATION_INVALID_FORMAT = "Invalid format" + ". Please follow the format: $identifier:newResponse";
-    
+
     private final ResponseRepository repository;
     public AsyncChatListener(final ResponseRepository repository) {
         this.repository = repository;

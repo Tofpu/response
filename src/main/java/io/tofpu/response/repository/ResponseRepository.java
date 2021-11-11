@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class ResponseRepository {
+public final class ResponseRepository {
     private static final String DIRECTORY = "response";
     private final static String RESPONSE_PATH = "settings.response";
     private final static String EMPTY_IDENTIFIER = "Attempted to register a " +
