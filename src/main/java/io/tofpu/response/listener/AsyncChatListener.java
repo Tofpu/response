@@ -50,8 +50,10 @@ public class AsyncChatListener implements Listener {
 
     private void retrieveResponse(final AsyncPlayerChatEvent event,
             final String content) {
+        // splitting the content to our appropriate format
+        final String[] args = content.split(":");
         // trying to retrieve a response out of the message's content
-        final Optional<Response> response = repository.findResponseBy(content);
+        final Optional<Response> response = repository.findResponseBy(args[0]);
 
         // if the message's content identifier isn't listed on the
         // repository, return
@@ -76,7 +78,7 @@ public class AsyncChatListener implements Listener {
         event.setCancelled(true);
 
         // if the args length is lower than the required args (1), return
-        if (args.length < 1) {
+        if (args.length <= 1) {
             player.sendMessage(INVALID_FORMAT);
             return;
         }
