@@ -24,17 +24,24 @@ public class AsyncChatListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     private void onAsyncPlayerChat(final AsyncPlayerChatEvent event) {
+        // our event message
         final String message = event.getMessage();
+        // if the message is empty or the message's length is lower than 2,
+        // set it to empty, otherwise; ignore the first given character
         final String content = message.isEmpty() || message.length() < 2 ? "" :
                 message.substring(1);
 
+        // debug purposes, you can ignore this
         System.out.println(message);
         System.out.println(content);
 
+        // retrieving our first given character from the message variable
         switch (message.substring(0, 1)) {
+            // if our first given character is ?
             case "?": // trying to retrieve a response
                 retrieveResponse(event, content);
                 break;
+            // if our first given character is #
             case "#": // trying to create a response
                 createResponse(event, content);
                 break;
@@ -52,6 +59,8 @@ public class AsyncChatListener implements Listener {
             return;
         }
 
+        // replace the ?identifier with our given response associated with
+        // the identifier
         event.setMessage(response.get().getResponse());
     }
 
