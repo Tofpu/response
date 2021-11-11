@@ -10,14 +10,14 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import java.util.Optional;
 
 public class AsyncChatListener implements Listener {
-    private final static String INVALID_FORMAT = "Invalid Format, Please " +
-            "ensure to follow this format: #identifier:response!";
-    private final static String FAILURE_ATTEMPT = "An attempt to register \"%s\" " +
-            "response has failed. Check your console for further details.";
-    private static final String SUCCESS_ATTEMPT = "You have successfully " +
-            "registered \"%s\" response!";
-    private final ResponseRepository repository;
+    private final static String INVALID_FORMAT = "Invalid format. Please follow the format: #identifier:response!";
+    private final static String REGISTRATION_FAILURE = "An attempt to register \"%s\" " + "response has failed. Check your console for further details.";
+    private static final String REGISTRATION_SUCCESSFUL = "You have successfully " + "registered \"%s\" response!";
+    private static final String MODIFICATION_SUCCESSFUL = "You have " + "successfully modified \"%s\" response!";
+    private final static String MODIFICATION_INVALID_FORMAT = "Invalid format" +
+            ". Please follow the format: $identifier:newResponse";
 
+    private final ResponseRepository repository;
     public AsyncChatListener(final ResponseRepository repository) {
         this.repository = repository;
     }
@@ -44,6 +44,9 @@ public class AsyncChatListener implements Listener {
             // if our first given character is #
             case "#": // trying to create a response
                 createResponse(event, content);
+                break;
+            case "$":
+                modifyResponse(event, content);
                 break;
         }
     }
@@ -85,10 +88,41 @@ public class AsyncChatListener implements Listener {
 
         // attempting to register the response
         if (this.repository.register(args[0], args[1]) == null) {
-            player.sendMessage(String.format(FAILURE_ATTEMPT, args[0]));
+            player.sendMessage(String.format(REGISTRATION_FAILURE, args[0]));
         } else {
-            player.sendMessage(String.format(SUCCESS_ATTEMPT, args[0]));
+            player.sendMessage(String.format(REGISTRATION_SUCCESSFUL, args[0]));
         }
+    }
+
+    public void modifyResponse(final AsyncPlayerChatEvent event,
+            final String content) {
+        final Player player = event.getPlayer();
+        final String[] args = content.split(":");
+
+        event.setCancelled(true);
+
+        // if the args length is lower than the required args (1), return
+        if (args.length <= 1) {
+            player.sendMessage(MODIFICATION_INVALID_FORMAT);
+            return;
+        }
+
+        // trying to retrieve a response out of the message's content
+        final Optional<Response> optionalResponse =
+                repository.findResponseBy(args[0]);
+
+        if (!optionalResponse.isPresent()) {
+            return;
+        }
+
+        final Response response = optionalResponse.get();
+        // TODO: I apparently couldn't use our local variable to synchronize
+        //  with...
+        synchronized (optionalResponse.get()) {
+            response.setResponse(args[1]);
+        }
+
+        player.sendMessage(String.format(MODIFICATION_SUCCESSFUL, content));
     }
 
     public ResponseRepository getRepository() {
