@@ -20,6 +20,7 @@ public class ResponseRepository {
             "\"%s\" response with an empty response!";
     private final static String REGISTRATION_TWICE = "Attempted to register " +
             "an \"%s\" response twice!";
+    private final static String RESPONSE_LOADED = "Loaded \"%s\" response!";
 
     private final File parent, directory;
     private final Map<String, Response> responses = new HashMap<>();
@@ -70,6 +71,7 @@ public class ResponseRepository {
         synchronized (this.responses) {
             responses.put(identifier, response);
         }
+        Bukkit.getLogger().info(String.format(RESPONSE_LOADED, identifier));
 
         return response;
     }
