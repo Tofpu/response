@@ -10,14 +10,12 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import java.util.Optional;
 
 public class AsyncChatListener implements Listener {
-    private final static String MISSING_IDENTIFIER = "Missing Identifier, " +
-            "Please ensure to follow this format: ?identifier";
     private final static String INVALID_FORMAT = "Invalid Format, Please " +
             "ensure to follow this format: #identifier:response!";
-    private final static String FAILURE_ATTEMPT = "An attempt to register %s " +
+    private final static String FAILURE_ATTEMPT = "An attempt to register \"%s\" " +
             "response has failed. Check your console for further details.";
     private static final String SUCCESS_ATTEMPT = "You have successfully " +
-            "registered %s response!";
+            "registered \"%s\" response!";
     private final ResponseRepository repository;
 
     public AsyncChatListener(final ResponseRepository repository) {
@@ -27,17 +25,11 @@ public class AsyncChatListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     private void onAsyncPlayerChat(final AsyncPlayerChatEvent event) {
         final String message = event.getMessage();
-        final String content = message.isEmpty() ? "" : message.substring(1,
-                message.length() - 1);
+        final String content = message.isEmpty() || message.length() < 2 ? "" :
+                message.substring(1);
 
         System.out.println(message);
         System.out.println(content);
-
-        if (content.isEmpty()) {
-            event.setCancelled(true);
-            event.getPlayer().sendMessage(MISSING_IDENTIFIER);
-            return;
-        }
 
         switch (message.substring(0, 1)) {
             case "?": // trying to retrieve a response

@@ -1,4 +1,4 @@
 name: Response
 version: '${project.version}'
-main: io.tofpu.response.Response
+main: io.tofpu.response.ResponsePlugin
 authors: [ Tofpu ]

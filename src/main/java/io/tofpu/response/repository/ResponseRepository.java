@@ -17,9 +17,9 @@ public class ResponseRepository {
     private final static String EMPTY_IDENTIFIER = "Attempted to register a " +
             "response with no given identifier!";
     private final static String EMPTY_RESPONSE = "Attempted to register an " +
-            "%s response with an empty response!";
+            "\"%s\" response with an empty response!";
     private final static String REGISTRATION_TWICE = "Attempted to register " +
-            "an %s response twice!";
+            "an \"%s\" response twice!";
 
     private final File parent, directory;
     private final Map<String, Response> responses = new HashMap<>();
@@ -49,14 +49,13 @@ public class ResponseRepository {
                 continue;
             }
 
-            register(identifier, response);
+            register(identifier.replace(".yml", ""), response);
         }
     }
 
     public Response register(final String identifier, final String content) {
         if (identifier == null || identifier.isEmpty()) {
-            Bukkit.getLogger()
-                    .warning(EMPTY_IDENTIFIER);
+            Bukkit.getLogger().warning(EMPTY_IDENTIFIER);
             return null;
         } else if (content == null || content.isEmpty()) {
             Bukkit.getLogger().warning(String.format(EMPTY_RESPONSE, identifier));
@@ -77,7 +76,6 @@ public class ResponseRepository {
 
     public Optional<Response> findResponseBy(final String identifier) {
         if (identifier == null || identifier.isEmpty()) {
-            Bukkit.getLogger().warning(EMPTY_IDENTIFIER);
             return Optional.empty();
         }
         final Response response;
@@ -91,7 +89,7 @@ public class ResponseRepository {
         synchronized (this.responses) {
             // TODO: flush the data to their own dedicated file code here...
             for (final Response response : this.responses.values()) {
-                final File file = new File(this.parent,
+                final File file = new File(this.directory,
                         response.getIdentifier() + ".yml");
                 final FileConfiguration configuration =
                         YamlConfiguration.loadConfiguration(file);
@@ -101,10 +99,9 @@ public class ResponseRepository {
                     configuration.save(file);
                 } catch (IOException e) {
                     throw new IllegalStateException(e);
-                } finally {
-                    this.responses.clear();
                 }
             }
+            this.responses.clear();
         }
     }
 
