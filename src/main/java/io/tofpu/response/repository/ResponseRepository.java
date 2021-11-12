@@ -11,25 +11,24 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class ResponseRepository {
-    private static final String DIRECTORY = "response";
+    private final static String DIRECTORY = "response";
     private final static String RESPONSE_PATH = "settings.response";
-    private final static String EMPTY_IDENTIFIER = "Attempted to register a " +
-            "response with no given identifier!";
-    private final static String EMPTY_RESPONSE = "Attempted to register an " +
-            "\"%s\" response with an empty response!";
-    private final static String REGISTRATION_TWICE = "Attempted to register " +
-            "an \"%s\" response twice!";
+    private final static String EMPTY_IDENTIFIER = "Attempted to register a response with no given identifier!";
+    private final static String EMPTY_RESPONSE = "Attempted to register an \"%s\" response with an empty response!";
+    private final static String REGISTRATION_TWICE = "Attempted to register an \"%s\" response twice!";
     private final static String RESPONSE_LOADED = "Loaded \"%s\" response!";
     private final static String FAILURE_FLUSH = "Failed attempt to save \"%s\" response file!";
 
     private final File parent, directory;
-    private final Map<String, Response> responses = new HashMap<>();
+    private final Map<String, Response> responses;
 
     public ResponseRepository(final File parent) {
         this.parent = parent;
         this.directory = new File(parent, DIRECTORY);
+        this.responses = new ConcurrentHashMap<>();
     }
 
     public void load() {
@@ -81,11 +80,9 @@ public final class ResponseRepository {
         // create our class with the provided identifier & content response
         final Response response = new Response(identifier, content);
 
-        // synchronise the responses map
-        synchronized (this.responses) {
-            // insert the response class to our map
-            responses.put(identifier, response);
-        }
+        // insert the response class to our map
+        responses.put(identifier, response);
+
         // success attempt log
         Logger.debug(String.format(RESPONSE_LOADED, identifier));
 
@@ -97,40 +94,31 @@ public final class ResponseRepository {
         if (identifier == null || identifier.isEmpty()) {
             return Optional.empty();
         }
-        final Response response;
-        // synchronise our responses map
-        synchronized (this.responses) {
-            // retrieve the response associated with the identifier from our map
-            response = this.responses.get(identifier);
-        }
-        return Optional.ofNullable(response);
+        // returning the response associated with the identifier from our map
+        return Optional.ofNullable(this.responses.get(identifier));
     }
 
     public void flush() {
-        // synchronise our responses map
-        synchronized (this.responses) {
-            // TODO: flush the data to their own dedicated file code here...
-            for (final Response response : this.responses.values()) {
-                // create our decicated file for the response data
-                final File file = new File(this.directory,
-                        response.getIdentifier() + ".yml");
-                // load an instance of YamlConfiguration to set our data
-                final FileConfiguration configuration =
-                        YamlConfiguration.loadConfiguration(file);
+        // TODO: flush the data to their own dedicated file code here...
+        for (final Response response : this.responses.values()) {
+            // create our decicated file for the response data
+            final File file = new File(this.directory, response.getIdentifier() + ".yml");
+            // load an instance of YamlConfiguration to set our data
+            final FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
 
-                // set the path with our given response
-                configuration.set(RESPONSE_PATH, response.getResponse());
-                try {
-                    // save the changes
-                    configuration.save(file);
+            // set the path with our given response
+            configuration.set(RESPONSE_PATH, response.getResponse());
+            try {
+                // save the changes
+                configuration.save(file);
             } catch (IllegalArgumentException | IOException e) {
                 Logger.warn(String.format(FAILURE_FLUSH, response
                         .getIdentifier()));
                 e.printStackTrace();
             }
-            // empty our responses map
-            this.responses.clear();
         }
+        // empty our responses map
+        this.responses.clear();
     }
 
     public File getParent() {
