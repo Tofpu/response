@@ -1,7 +1,7 @@
 # What is Response?
 __Reponse__ is a simple and lightweight answer plugin that makes it easy to create the most common answers with ease.
 
-Have you ever felt frustrated answering your player's common questions, over and over again? You're at the right place!
+__Have you ever felt frustrated answering your player's common questions, over and over again? You're at the right place!__
 
 ## How to get started?
 1. Download the latest version of Response at [releases](/releases).
