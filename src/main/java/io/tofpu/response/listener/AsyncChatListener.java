@@ -41,6 +41,9 @@ public final class AsyncChatListener implements Listener {
             case "$":
                 operationType = ResponseHandler.ResponseOperationType.MODIFY;
                 break;
+            case "!":
+                operationType = ResponseHandler.ResponseOperationType.DELETE;
+                break;
             default:
                 return;
         }

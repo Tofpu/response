@@ -25,6 +25,9 @@ public final class ResponseRepository {
     private final static String RESPONSE_LOADED = "Loaded \"%s\" response!";
     private final static String FAILURE_FLUSH = "Failed attempt to save \"%s\" response file!";
 
+    private final static String DELETION_UNKNOWN = "Attempted to delete a null response. Impossible!";
+    private final static String DELETION_FAILURE = "Failed to delete %s response file!";
+
     private final File parent, directory;
     private final Map<String, Response> responses;
     private final Timer timer;
@@ -142,6 +145,20 @@ public final class ResponseRepository {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void delete(final Response response) {
+        if (response == null) {
+            Logger.debug(DELETION_UNKNOWN);
+            return;
+        }
+        final String identifier = response.getIdentifier();
+        final File file = new File(directory, identifier + ".yml");
+        if (file.exists() && !file.delete()) {
+            Logger.debug(String.format(DELETION_FAILURE, identifier));
+        }
+
+        responses.remove(identifier, response);
     }
 
     public File getParent() {

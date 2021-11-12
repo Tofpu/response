@@ -16,6 +16,8 @@ public class ResponseHandler {
     private final static String MODIFICATION_SUCCESSFUL = "You have successfully modified \"%s\" response!";
     private final static String MODIFICATION_INVALID_FORMAT = "Invalid format. Please follow the format: $identifier:newResponse";
 
+    private final static String DELETION_SUCCESSFUL = "You have successfully deleted \"%s\" response";
+
     private final ResponseRepository repository;
 
     public ResponseHandler(final ResponseRepository repository) {
@@ -49,6 +51,9 @@ public class ResponseHandler {
                 break;
             case MODIFY:
                 modifyResponse(event, args);
+                break;
+            case DELETE:
+                deleteResponse(event, args);
                 break;
         }
     }
@@ -108,6 +113,27 @@ public class ResponseHandler {
         player.sendMessage(String.format(MODIFICATION_SUCCESSFUL, identifier));
     }
 
+    private void deleteResponse(final AsyncPlayerChatEvent event,
+            final String[] args) {
+        final Player player = event.getPlayer();
+        final String identifier = args[0];
+
+        // attempting to retrieve a response out of the message's content
+        final Optional<Response> value =
+                repository.findResponseBy(identifier);
+
+        // if the message's content identifier isn't listed on the
+        // repository, return
+        if (!value.isPresent()) {
+            return;
+        } else {
+            // attempt to delete the response from our map & file
+            repository.delete(value.get());
+        }
+
+        player.sendMessage(String.format(DELETION_SUCCESSFUL, identifier));
+    }
+
     public ResponseRepository getRepository() {
         return repository;
     }
@@ -142,12 +168,13 @@ public class ResponseHandler {
     }
 
     public enum ResponseOperationType {
-        REGISTER, RETRIEVE, MODIFY;
+        REGISTER, RETRIEVE, MODIFY, DELETE;
 
         public boolean hasPermission(final Player player) {
             switch (this) {
                 case REGISTER:
                 case MODIFY:
+                case DELETE:
                     return player.hasPermission(PERMISSION_NODE + this.name());
                 default:
                     return true;
