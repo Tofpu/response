@@ -1,6 +1,6 @@
 package io.tofpu.response.util;
 
-public class Logger {
+public final class Logger {
     private static java.util.logging.Logger logger;
 
     public static void setLogger(final java.util.logging.Logger logger) {

@@ -1,6 +1,6 @@
 package io.tofpu.response.object;
 
-public class Response {
+public final class Response {
     // The following variables are not final due to being subject to change.
     private String identifier;
     private String response;
