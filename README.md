@@ -1,7 +1,7 @@
 # What is Response?
 __Reponse__ is a simple and lightweight answer plugin that makes it easy to create the most common answers with ease.
 
-Have you ever felt frustrated answering your player's common questions, over and over again? You're at the right place!
+__Have you ever felt frustrated answering your player's common questions, over and over again? You're at the right place!__
 
 ## How to get started?
 1. Download the latest version of Response at [releases](/releases).
@@ -11,6 +11,19 @@ Have you ever felt frustrated answering your player's common questions, over and
 as "test" with "our test placeholder" as *our response*, then type `?test` to __view your newly made response__.
 5. Congratulations! We're finished here.
 
-## How to modify my responses?
-Use this format: `$yourIdentifier:yourResponse`!
-Example: `$test:another response, wooo!`
+## How to create a new response?
+__Follow this format__: `#test:yourMessageHere`  
+__Example__: `#test:our new response, wooo!` creates a unique response that is 
+identified as `test` with `our new response, wooo!` as our response. 
+
+## How to view my response?
+__Follow this format__: `?test`  
+__Example__: `?test` displays `our new response, wooo!`.
+
+## How to modify my response?
+__Follow this format__: `$yourIdentifier:yourResponse`  
+__Example__: `$test:another response, yeet!` modifies `our new response, wooo!` to `another response, yeet!`.
+
+## How to delete my response?
+__Follow this format__: `!yourIdentifier`  
+__Example__: `$test` deletes a response that is associated as `test`. 
