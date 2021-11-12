@@ -1,7 +1,7 @@
 package io.tofpu.response;
 
 import io.tofpu.response.listener.AsyncChatListener;
-import io.tofpu.response.repository.ResponseHandler;
+import io.tofpu.response.handler.ResponseHandler;
 import io.tofpu.response.repository.ResponseRepository;
 import io.tofpu.response.util.Logger;
 import org.bukkit.Bukkit;
