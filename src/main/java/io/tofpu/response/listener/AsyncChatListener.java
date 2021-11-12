@@ -30,9 +30,8 @@ public final class AsyncChatListener implements Listener {
         final String content = message.isEmpty() || message.length() < 2 ? "" :
                 message.substring(1);
 
-        // debug purposes, you can ignore this
-        System.out.println(message);
-        System.out.println(content);
+        Logger.debug(message);
+        Logger.debug(content);
 
         // retrieving our first given character from the message variable
         switch (message.substring(0, 1)) {

@@ -2,6 +2,7 @@ package io.tofpu.response;
 
 import io.tofpu.response.listener.AsyncChatListener;
 import io.tofpu.response.repository.ResponseRepository;
+import io.tofpu.response.util.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,6 +16,7 @@ public final class ResponsePlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
+        Logger.setLogger(getLogger());
         this.repository.load();
         Bukkit.getPluginManager().registerEvents(new AsyncChatListener(this.repository), this);
     }

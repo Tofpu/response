@@ -1,6 +1,7 @@
 package io.tofpu.response.repository;
 
 import io.tofpu.response.object.Response;
+import io.tofpu.response.util.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -21,6 +22,7 @@ public final class ResponseRepository {
     private final static String REGISTRATION_TWICE = "Attempted to register " +
             "an \"%s\" response twice!";
     private final static String RESPONSE_LOADED = "Loaded \"%s\" response!";
+    private final static String FAILURE_FLUSH = "Failed attempt to save \"%s\" response file!";
 
     private final File parent, directory;
     private final Map<String, Response> responses = new HashMap<>();
@@ -61,18 +63,18 @@ public final class ResponseRepository {
     public Response register(final String identifier, final String content) {
         // if the identifier is null or empty, throw an error & return null
         if (identifier == null || identifier.isEmpty()) {
-            Bukkit.getLogger().warning(EMPTY_IDENTIFIER);
+            Logger.warn(EMPTY_IDENTIFIER);
             return null;
         } else if (content == null || content.isEmpty()) { // if the provided
             // content is null or empty, throw an error & return null
-            Bukkit.getLogger().warning(String.format(EMPTY_RESPONSE, identifier));
+            Logger.warn(String.format(EMPTY_RESPONSE, identifier));
             return null;
         }
 
         // if the response that associates with the identifier is already
         // present, pop out a warning and return null
         if (findResponseBy(identifier).isPresent()) {
-            Bukkit.getLogger().warning(String.format(REGISTRATION_TWICE, identifier));
+            Logger.warn(String.format(REGISTRATION_TWICE, identifier));
             return null;
         }
 
@@ -85,7 +87,7 @@ public final class ResponseRepository {
             responses.put(identifier, response);
         }
         // success attempt log
-        Bukkit.getLogger().info(String.format(RESPONSE_LOADED, identifier));
+        Logger.debug(String.format(RESPONSE_LOADED, identifier));
 
         return response;
     }
@@ -121,9 +123,10 @@ public final class ResponseRepository {
                 try {
                     // save the changes
                     configuration.save(file);
-                } catch (IOException e) {
-                    throw new IllegalStateException(e);
-                }
+            } catch (IllegalArgumentException | IOException e) {
+                Logger.warn(String.format(FAILURE_FLUSH, response
+                        .getIdentifier()));
+                e.printStackTrace();
             }
             // empty our responses map
             this.responses.clear();
