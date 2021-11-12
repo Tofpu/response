@@ -4,6 +4,7 @@ import io.tofpu.response.listener.AsyncChatListener;
 import io.tofpu.response.handler.ResponseHandler;
 import io.tofpu.response.repository.ResponseRepository;
 import io.tofpu.response.util.Logger;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,7 +26,10 @@ public final class ResponsePlugin extends JavaPlugin {
         // loading our responses
         this.repository.load();
 
-        // registering the chat event
+        // loading metrics for our plugin
+        new Metrics(this, 13310);
+
+        // start listening to chat event
         Bukkit.getPluginManager()
                 .registerEvents(new AsyncChatListener(this.handler), this);
     }
