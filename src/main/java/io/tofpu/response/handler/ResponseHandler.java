@@ -2,6 +2,7 @@ package io.tofpu.response.handler;
 
 import io.tofpu.response.object.Response;
 import io.tofpu.response.repository.ResponseRepository;
+import io.tofpu.response.util.ChatUtility;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
@@ -37,7 +38,7 @@ public class ResponseHandler {
             operation.getEvent().setCancelled(true);
             // if the args length is lower than the required args (1), return
             if (args.length <= 2) {
-                player.sendMessage(type == ResponseOperationType.REGISTER ? REGISTRATION_INVALID_FORMAT : MODIFICATION_INVALID_FORMAT);
+                player.sendMessage(ChatUtility.colorize(type == ResponseOperationType.REGISTER ? REGISTRATION_INVALID_FORMAT : MODIFICATION_INVALID_FORMAT));
                 return;
             }
         }
@@ -72,7 +73,7 @@ public class ResponseHandler {
 
         // replacing the ?identifier with our given response associated with
         // the identifier
-        event.setMessage(response.get().getResponse());
+        event.setMessage(ChatUtility.colorize(response.get().getResponse()));
     }
 
     private void createResponse(final AsyncPlayerChatEvent event,
@@ -86,9 +87,9 @@ public class ResponseHandler {
 
         // attempting to register the response
         if (this.repository.register(identifier, response) == null) {
-            player.sendMessage(String.format(REGISTRATION_FAILURE, identifier));
+            player.sendMessage(ChatUtility.colorize(String.format(REGISTRATION_FAILURE, identifier)));
         } else {
-            player.sendMessage(String.format(REGISTRATION_SUCCESSFUL, identifier));
+            player.sendMessage(ChatUtility.colorize(String.format(REGISTRATION_SUCCESSFUL, identifier)));
         }
     }
 
@@ -110,7 +111,7 @@ public class ResponseHandler {
             value.get().setResponse(response);
         }
 
-        player.sendMessage(String.format(MODIFICATION_SUCCESSFUL, identifier));
+        player.sendMessage(ChatUtility.colorize(String.format(MODIFICATION_SUCCESSFUL, identifier)));
     }
 
     private void deleteResponse(final AsyncPlayerChatEvent event,
@@ -131,7 +132,7 @@ public class ResponseHandler {
             repository.delete(value.get());
         }
 
-        player.sendMessage(String.format(DELETION_SUCCESSFUL, identifier));
+        player.sendMessage(ChatUtility.colorize(String.format(DELETION_SUCCESSFUL, identifier)));
     }
 
     public ResponseRepository getRepository() {
