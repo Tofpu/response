@@ -36,6 +36,6 @@ jobs:
         uses: plutotcool/release@v1.0.0
         with:
           # GitHub Token used to create the release on GitHub and publish on GitHub registry.
-          github_token: ${{ secrets.token }}
+          github_token: ${{ github.token }}
           # Enable or disable publishing to package registries. When set to false, releases are only created on GitHub.
           publish: false # optional, default is true
