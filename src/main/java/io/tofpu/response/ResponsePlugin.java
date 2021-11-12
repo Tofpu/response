@@ -24,7 +24,7 @@ public final class ResponsePlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        this.repository.flush();
+        this.repository.flush(false);
     }
 
     public ResponseRepository getRepository() {

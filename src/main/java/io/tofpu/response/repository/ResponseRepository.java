@@ -8,12 +8,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public final class ResponseRepository {
+    private final static int UPDATE_INTERVAL = 5;
     private final static String DIRECTORY = "response";
     private final static String RESPONSE_PATH = "settings.response";
     private final static String EMPTY_IDENTIFIER = "Attempted to register a response with no given identifier!";
@@ -24,11 +25,21 @@ public final class ResponseRepository {
 
     private final File parent, directory;
     private final Map<String, Response> responses;
+    private final Timer timer;
 
     public ResponseRepository(final File parent) {
         this.parent = parent;
         this.directory = new File(parent, DIRECTORY);
         this.responses = new ConcurrentHashMap<>();
+        this.timer = new Timer();
+
+        final long toMillis = TimeUnit.MINUTES.toMillis(UPDATE_INTERVAL);
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                flush(true);
+            }
+        }, toMillis, toMillis);
     }
 
     public void load() {
@@ -98,7 +109,20 @@ public final class ResponseRepository {
         return Optional.ofNullable(this.responses.get(identifier));
     }
 
-    public void flush() {
+    public void flush(final boolean async) {
+        if (async) {
+            CompletableFuture.runAsync(this::flush);
+        } else {
+            flush();
+            // empty our responses map
+            this.responses.clear();
+
+            // cancelling our timer due to shutting down
+            this.timer.cancel();
+        }
+    }
+
+    private void flush() {
         // TODO: flush the data to their own dedicated file code here...
         for (final Response response : this.responses.values()) {
             // create our decicated file for the response data
@@ -117,8 +141,6 @@ public final class ResponseRepository {
                 e.printStackTrace();
             }
         }
-        // empty our responses map
-        this.responses.clear();
     }
 
     public File getParent() {
