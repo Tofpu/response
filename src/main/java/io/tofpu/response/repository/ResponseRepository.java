@@ -19,11 +19,13 @@ public final class ResponseRepository {
     private final static int UPDATE_INTERVAL = 5;
     private final static String DIRECTORY = "response";
     private final static String RESPONSE_PATH = "settings.response";
+
     private final static String EMPTY_IDENTIFIER = "Attempted to register a response with no given identifier!";
     private final static String EMPTY_RESPONSE = "Attempted to register an \"%s\" response with an empty response!";
+
     private final static String REGISTRATION_TWICE = "Attempted to register an \"%s\" response twice!";
     private final static String RESPONSE_LOADED = "Loaded \"%s\" response!";
-    private final static String FAILURE_FLUSH = "Failed attempt to save \"%s\" response file!";
+    private final static String FLUSH_FAILURE = "Failed attempt to save \"%s\" response file!";
 
     private final static String DELETION_UNKNOWN = "Attempted to delete a null response. Impossible!";
     private final static String DELETION_FAILURE = "Failed to delete %s response file!";
@@ -140,7 +142,7 @@ public final class ResponseRepository {
                 // save the changes
                 configuration.save(file);
             } catch (IllegalArgumentException | IOException e) {
-                Logger.warn(String.format(FAILURE_FLUSH, response
+                Logger.warn(String.format(FLUSH_FAILURE, response
                         .getIdentifier()));
                 e.printStackTrace();
             }
