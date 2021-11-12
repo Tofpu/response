@@ -14,6 +14,7 @@ public final class AsyncChatListener implements Listener {
     private final static String REGISTRATION_INVALID_FORMAT = "Invalid format. Please follow the format: #identifier:response!";
     private final static String REGISTRATION_FAILURE = "An attempt to register \"%s\" response has failed. Check your console for further details.";
     private final static String REGISTRATION_SUCCESSFUL = "You have successfully registered \"%s\" response!";
+
     private final static String MODIFICATION_SUCCESSFUL = "You have successfully modified \"%s\" response!";
     private final static String MODIFICATION_INVALID_FORMAT = "Invalid format. Please follow the format: $identifier:newResponse";
 
@@ -53,6 +54,11 @@ public final class AsyncChatListener implements Listener {
                 break;
             default:
                 return;
+        }
+
+        // if the given player doesn't have the appropriate permission, return
+        if (!operationType.hasPermission(event.getPlayer())) {
+            return;
         }
 
         response(ResponseOperation.of(operationType, event, content));
@@ -178,6 +184,16 @@ public final class AsyncChatListener implements Listener {
     }
 
     private enum ResponseOperationType {
-        REGISTER, RETRIEVE, MODIFY
+        REGISTER, RETRIEVE, MODIFY;
+
+        public boolean hasPermission(final Player player) {
+            switch (this) {
+                case REGISTER:
+                case MODIFY:
+                    return player.hasPermission("response." + this.name());
+                default:
+                    return true;
+            }
+        }
     }
 }
