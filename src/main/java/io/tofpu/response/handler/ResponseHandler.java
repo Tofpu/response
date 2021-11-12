@@ -10,14 +10,14 @@ import java.util.Optional;
 
 public class ResponseHandler {
     private final static String PERMISSION_NODE = "response.";
-    private final static String REGISTRATION_INVALID_FORMAT = "Invalid format. Please follow the format: #identifier:response!";
-    private final static String REGISTRATION_FAILURE = "An attempt to register \"%s\" response has failed. Check your console for further details.";
-    private final static String REGISTRATION_SUCCESSFUL = "You have successfully registered \"%s\" response!";
+    private final static String REGISTRATION_INVALID_FORMAT = "&cInvalid " + "format. Please follow the format: &4#identifier:response!";
+    private final static String REGISTRATION_FAILURE = "&cAn attempt to " + "register \"%s\" response has failed. Check your console for further details.";
+    private final static String REGISTRATION_SUCCESSFUL = "&eYou have " + "successfully registered &6\"%s\" &eresponse!";
 
-    private final static String MODIFICATION_SUCCESSFUL = "You have successfully modified \"%s\" response!";
-    private final static String MODIFICATION_INVALID_FORMAT = "Invalid format. Please follow the format: $identifier:newResponse";
+    private final static String MODIFICATION_SUCCESSFUL = "&eYou have " + "successfully modified &6\"%s\" &eresponse!";
+    private final static String MODIFICATION_INVALID_FORMAT = "&cInvalid " + "format. Please follow the format: &4$identifier:newResponse";
 
-    private final static String DELETION_SUCCESSFUL = "You have successfully deleted \"%s\" response";
+    private final static String DELETION_SUCCESSFUL = "&eYou have " + "successfully deleted &6\"%s\" &eresponse";
 
     private final ResponseRepository repository;
 

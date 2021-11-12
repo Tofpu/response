@@ -17,10 +17,12 @@ public final class AsyncChatListener implements Listener {
     private void onAsyncPlayerChat(final AsyncPlayerChatEvent event) {
         // our event message
         final String message = event.getMessage();
-        // if the message is empty or the message's length is lower than 2,
+        // our message's prefix
+        final String prefix = message.isEmpty() || message.length() <= 1 ? "" : message
+                .substring(0, 1);
+        // if the message is empty, or the message's length is lower than 2,
         // set it to empty, otherwise; ignore the first given character
-        final String content = message.isEmpty() || message.length() < 2 ? "" : message
-                .substring(1);
+        final String content = prefix.isEmpty() ? "" : message.substring(1);
 
         Logger.debug(message);
         Logger.debug(content);
@@ -28,23 +30,24 @@ public final class AsyncChatListener implements Listener {
         // our operation type
         final ResponseHandler.ResponseOperationType operationType;
         // retrieving our first given character from the message variable
-        switch (message.substring(0, Math.min(message.length(), 1))) {
+        switch (prefix) {
             // if our first given character is #
-            case "#": // trying to create a response
+            case "#": // attempting to create a response
                 operationType = ResponseHandler.ResponseOperationType.REGISTER;
                 break;
             // if our first given character is ?
-            case "?": // trying to retrieve a response
+            case "?": // attempting to retrieve a response
                 operationType = ResponseHandler.ResponseOperationType.RETRIEVE;
                 break;
             // if our first given character is $
-            case "$":
+            case "$": // attempting to modify a response
                 operationType = ResponseHandler.ResponseOperationType.MODIFY;
                 break;
-            case "!":
+            // if our first given character is !
+            case "!": // attempting to delete a response
                 operationType = ResponseHandler.ResponseOperationType.DELETE;
                 break;
-            default:
+            default: // unrelated, go on!
                 return;
         }
 

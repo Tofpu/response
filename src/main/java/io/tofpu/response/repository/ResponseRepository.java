@@ -14,13 +14,14 @@ import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 public final class ResponseRepository {
     private final static int UPDATE_INTERVAL = 5;
     private final static String DIRECTORY = "response";
     private final static String RESPONSE_PATH = "settings.response";
 
-    private final static String EMPTY_IDENTIFIER = "Attempted to register a response with no given identifier!";
+    private final static String EMPTY_IDENTIFIER = "Attempted to register a response with no given/unknown identifier!";
     private final static String EMPTY_RESPONSE = "Attempted to register an \"%s\" response with an empty response!";
 
     private final static String REGISTRATION_TWICE = "Attempted to register an \"%s\" response twice!";
@@ -29,6 +30,8 @@ public final class ResponseRepository {
 
     private final static String DELETION_UNKNOWN = "Attempted to delete a null response. Impossible!";
     private final static String DELETION_FAILURE = "Failed to delete %s response file!";
+
+    private final static Pattern PATTERN = Pattern.compile("^[A-Za-z0-9_-]*$");
 
     private final File parent, directory;
     private final Map<String, Response> responses;
@@ -79,7 +82,8 @@ public final class ResponseRepository {
 
     public Response register(final String identifier, final String content) {
         // if the identifier is null or empty, throw an error & return null
-        if (identifier == null || identifier.isEmpty()) {
+        if (identifier == null || identifier.isEmpty() || !PATTERN.matcher(identifier)
+                .matches()) {
             Logger.warn(EMPTY_IDENTIFIER);
             return null;
         } else if (content == null || content.isEmpty()) { // if the provided
