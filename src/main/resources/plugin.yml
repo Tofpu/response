@@ -2,3 +2,4 @@ name: Response
 version: '${project.version}'
 main: io.tofpu.response.ResponsePlugin
 authors: [ Tofpu ]
+description: A simple, lightweight response plugin which you can utilize to write your most common answers in-game with ease

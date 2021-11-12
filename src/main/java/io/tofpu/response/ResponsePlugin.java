@@ -16,9 +16,15 @@ public final class ResponsePlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
+        // setting the bukkit's logger
         Logger.setLogger(getLogger());
+
+        // loading our responses
         this.repository.load();
-        Bukkit.getPluginManager().registerEvents(new AsyncChatListener(this.repository), this);
+
+        // registering the chat event
+        Bukkit.getPluginManager()
+                .registerEvents(new AsyncChatListener(this.repository), this);
     }
 
     @Override

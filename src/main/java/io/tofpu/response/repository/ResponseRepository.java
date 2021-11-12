@@ -2,13 +2,15 @@ package io.tofpu.response.repository;
 
 import io.tofpu.response.object.Response;
 import io.tofpu.response.util.Logger;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -116,7 +118,6 @@ public final class ResponseRepository {
             flush();
             // empty our responses map
             this.responses.clear();
-
             // cancelling our timer due to shutting down
             this.timer.cancel();
         }
