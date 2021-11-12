@@ -25,12 +25,12 @@ __Follow this format__: `?test`
 __Example__: `?test` displays `our new response, wooo!`.
 
 ## How to modify my response?
-__Follow this format__: `$yourIdentifier:yourResponse`  
+__Follow this format__: `$yourIdentifier:newResponse`  
 __Example__: `$test:another response, yeet!` modifies `our new response, wooo!` to `another response, yeet!`.
 
 ## How to delete my response?
 __Follow this format__: `!yourIdentifier`  
-__Example__: `$test` deletes a response that is associated as `test`. 
+__Example__: `!test` deletes a response that is associated as `test`. 
 
 ---
 
