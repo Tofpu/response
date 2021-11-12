@@ -1,6 +1,7 @@
-package io.tofpu.response.repository;
+package io.tofpu.response.handler;
 
 import io.tofpu.response.object.Response;
+import io.tofpu.response.repository.ResponseRepository;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
