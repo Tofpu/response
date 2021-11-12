@@ -33,11 +33,12 @@ public class ResponseHandler {
         final Player player = event.getPlayer();
         // splitting the content to our appropriate format
         final String[] args = content.split(":");
-        // if the operationType does not equal to Retrieve, include more checks
-        if (type != ResponseOperationType.RETRIEVE) {
-            operation.getEvent().setCancelled(true);
+        // if the operationType does not equal to Register or Modify, include
+        // more checks
+        if (type == ResponseOperationType.REGISTER || type == ResponseOperationType.MODIFY) {
+            event.setCancelled(true);
             // if the args length is lower than the required args (1), return
-            if (args.length <= 2) {
+            if (args.length <= 1) {
                 player.sendMessage(ChatUtility.colorize(type == ResponseOperationType.REGISTER ? REGISTRATION_INVALID_FORMAT : MODIFICATION_INVALID_FORMAT));
                 return;
             }
@@ -128,10 +129,10 @@ public class ResponseHandler {
         if (!value.isPresent()) {
             return;
         } else {
-            // attempt to delete the response from our map & file
-            repository.delete(value.get());
+            event.setCancelled(true);
         }
-
+        // attempt to delete the response from our map & file
+        repository.delete(value.get());
         player.sendMessage(ChatUtility.colorize(String.format(DELETION_SUCCESSFUL, identifier)));
     }
 
