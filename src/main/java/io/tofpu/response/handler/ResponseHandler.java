@@ -46,7 +46,7 @@ public class ResponseHandler {
 
         switch (type) {
             case REGISTER:
-                createResponse(event, args);
+                createResponse(event, args, content);
                 break;
             case RETRIEVE:
                 retrieveResponse(event, args);
@@ -78,13 +78,13 @@ public class ResponseHandler {
     }
 
     private void createResponse(final AsyncPlayerChatEvent event,
-            final String[] args) {
+            final String[] args, final String content) {
         // format: identifier:response -- array: 0:1
         // example: discord:&eYou can join our discord at https:://www.discord.com
 
         final Player player = event.getPlayer();
         final String identifier = args[0];
-        final String response = args[1];
+        final String response = content.replace(identifier + ":", "");
 
         // attempting to register the response
         if (this.repository.register(identifier, response) == null) {
