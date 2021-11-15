@@ -40,8 +40,8 @@ __Example__: `!test` deletes a response that is associated as `test`.
 ---
 
 ## To-Do List:
-[x] Customizable messages  
-[x] Customizable prefixes  
-[x] An option to auto-trigger a response once it detects an identifier  
-[x] Reloadable responses?  
-[x] Possibly stats?  
+[x] PlaceholderAPI Support
+[-] Customizable prefixes  
+[-] An option to auto-trigger a response once it detects an identifier  
+[-] Reloadable responses?  
+[-] Possibly stats?  
