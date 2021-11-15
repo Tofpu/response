@@ -56,6 +56,10 @@ public final class AsyncChatListener implements Listener {
             return;
         }
 
-        handler.response(ResponseHandler.ResponseOperation.of(operationType, event, content));
+        this.handler.response(ResponseHandler.ResponseOperation.of(operationType, event, content));
+    }
+
+    public ResponseHandler getHandler() {
+        return this.handler;
     }
 }

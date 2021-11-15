@@ -25,7 +25,7 @@ public final class ResponseRepository {
     private final static String EMPTY_RESPONSE = "Attempted to register an \"%s\" response with an empty response!";
 
     private final static String REGISTRATION_TWICE = "Attempted to register an \"%s\" response twice!";
-    private final static String RESPONSE_LOADED = "Loaded \"%s\" response!";
+    private final static String RESPONSE_LOADED = "Loaded \"%s\" response";
     private final static String FLUSH_FAILURE = "Failed attempt to save \"%s\" response file!";
 
     private final static String DELETION_UNKNOWN = "Attempted to delete a null response. Impossible!";
@@ -36,6 +36,7 @@ public final class ResponseRepository {
     private final File parent, directory;
     private final Map<String, Response> responses;
     private final Timer timer;
+    private boolean startup = true;
 
     public ResponseRepository(final File parent) {
         this.parent = parent;
@@ -54,20 +55,19 @@ public final class ResponseRepository {
 
     public void load() {
         // if the directory doesn't exist, mkdir & skip
-        if (!directory.exists()) {
-            directory.mkdirs();
+        if (!this.directory.exists()) {
+            this.directory.mkdirs();
             return;
         }
 
-        for (final File file : directory.listFiles()) {
+        for (final File file : this.directory.listFiles()) {
             final String identifier = file.getName();
             // if the file name doesn't end with .yml, skip
             if (!identifier.endsWith(".yml")) {
                 continue;
             }
 
-            final FileConfiguration configuration =
-                    YamlConfiguration.loadConfiguration(file);
+            final FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
             final String response = configuration.getString(RESPONSE_PATH);
 
             // if the response is empty, skip
@@ -78,6 +78,7 @@ public final class ResponseRepository {
             // attempt to register the response data
             register(identifier.replace(".yml", ""), response);
         }
+        this.startup = false;
     }
 
     public Response register(final String identifier, final String content) {
@@ -103,10 +104,14 @@ public final class ResponseRepository {
         final Response response = new Response(identifier, content);
 
         // insert the response class to our map
-        responses.put(identifier, response);
+        this.responses.put(identifier, response);
 
-        // success attempt log
-        Logger.log(String.format(RESPONSE_LOADED, identifier));
+        // if we're starting up, we'll send a log regarding the registration
+        // status
+        if (this.startup) {
+            // success attempt log
+            Logger.log(String.format(RESPONSE_LOADED, identifier));
+        }
 
         return response;
     }
@@ -124,7 +129,7 @@ public final class ResponseRepository {
         if (async) {
             CompletableFuture.runAsync(this::flush);
         } else {
-            flush();
+            this.flush();
             // empty our responses map
             this.responses.clear();
             // cancelling our timer due to shutting down
@@ -164,14 +169,14 @@ public final class ResponseRepository {
             Logger.debug(String.format(DELETION_FAILURE, identifier));
         }
 
-        responses.remove(identifier, response);
+        this.responses.remove(identifier, response);
     }
 
     public File getParent() {
-        return parent;
+        return this.parent;
     }
 
     public File getDirectory() {
-        return directory;
+        return this.directory;
     }
 }
