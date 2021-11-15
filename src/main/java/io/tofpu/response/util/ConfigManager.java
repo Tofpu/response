@@ -43,6 +43,9 @@ public class ConfigManager {
                 e.printStackTrace();
             }
         }
+
+        // in-case the file doesn't exist, this will generate one for us
+        this.save();
     }
 
     public MyConfiguration getConfiguration() {

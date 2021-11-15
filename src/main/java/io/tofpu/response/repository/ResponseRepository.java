@@ -106,7 +106,7 @@ public final class ResponseRepository {
         responses.put(identifier, response);
 
         // success attempt log
-        Logger.debug(String.format(RESPONSE_LOADED, identifier));
+        Logger.log(String.format(RESPONSE_LOADED, identifier));
 
         return response;
     }

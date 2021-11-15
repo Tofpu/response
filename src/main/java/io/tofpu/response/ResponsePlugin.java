@@ -36,6 +36,22 @@ public final class ResponsePlugin extends JavaPlugin {
         // loading our config
         configManager.load(getDataFolder());
 
+        // general category of our configuration
+        final GeneralCategory generalCategory = configManager.getConfiguration()
+                .getGeneralCategory();
+        // if isEnabledPapiSupport returns true, we'll attempt to enable
+        // support for said plugin
+        if (generalCategory.isPAPISupportEnabled()) {
+            final boolean papiEnabled =
+                    Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
+
+            if (papiEnabled) {
+                Logger.log("Enabled PlaceholderAPI Support");
+            }
+
+            ChatUtility.setSupportPlaceholderAPI(papiEnabled);
+        }
+
         // start listening to chat event
         Bukkit.getPluginManager()
                 .registerEvents(new AsyncChatListener(this.handler), this);

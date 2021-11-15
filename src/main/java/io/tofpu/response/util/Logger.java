@@ -11,7 +11,17 @@ public final class Logger {
         logger.warning(message);
     }
 
-    public static void debug(final String message) {
+    public static void log(final String message) {
         logger.info(message);
+    }
+
+    public static void debug(final String message) {
+        if (!ConfigManager.getInstance()
+                .getConfiguration()
+                .getGeneralCategory()
+                .isDebugMessagesEnabled()) {
+            return;
+        }
+        log(message);
     }
 }

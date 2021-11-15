@@ -7,6 +7,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.Optional;
+import java.util.SplittableRandom;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ResponseHandler {
     private final static String PERMISSION_NODE = "response.";
@@ -74,7 +76,8 @@ public class ResponseHandler {
 
         // replacing the ?identifier with our given response associated with
         // the identifier
-        event.setMessage(ChatUtility.colorize(response.get().getResponse()));
+        event.setMessage(ChatUtility.colorize(event.getPlayer(),
+                response.get().getResponse()));
     }
 
     private void createResponse(final AsyncPlayerChatEvent event,
