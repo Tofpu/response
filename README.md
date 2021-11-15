@@ -1,10 +1,15 @@
-# What is Response?
-__Reponse__ is a simple and lightweight answer plugin that makes it easy to create the most common answers with ease.
+<div align="center">
+  <h1> What is Response? </h1>
+<b> Reponse</b> is a simple and lightweight response plugin that makes it easy to create the most common answers with ease.
 
-__Have you ever felt frustrated answering your player's common questions, over and over again? You're at the right place!__
+__Have you ever felt frustrated answering your player's common questions, over and over again?__ If so, You're at the right place!
 
-## What is your discord?
-You can join my discord at `link`, to chilling out or even for support purposes, I don't bite! :) 
+![creating a response](https://cdn.discordapp.com/attachments/761714903978475540/909402187883495424/javaw_ZYtjFlzTIo.png)
+![showing a response](https://cdn.discordapp.com/attachments/761714903978475540/909402175216697354/javaw_7Fyx2b0LTO.png)
+</div>
+
+## Our Discord Server
+You can join my discord at `https://discord.gg/rjks6D5Ynq`!
 
 ## How to get started?
 1. Download the latest version of Response at [releases](/releases).
