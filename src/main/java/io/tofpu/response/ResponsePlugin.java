@@ -6,6 +6,7 @@ import io.tofpu.response.repository.ResponseRepository;
 import io.tofpu.response.util.ChatUtility;
 import io.tofpu.response.util.ConfigManager;
 import io.tofpu.response.util.Logger;
+import io.tofpu.response.util.UpdateChecker;
 import io.tofpu.response.util.config.GeneralCategory;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -28,6 +29,19 @@ public final class ResponsePlugin extends JavaPlugin {
 
         // loading metrics for our plugin
         new Metrics(this, 13310);
+
+        // running the update checker async
+        UpdateChecker.init(this, 97614).requestUpdateCheck().whenComplete((updateResult, throwable) -> {
+            final java.util.logging.Logger logger = getLogger();
+
+            if (updateResult.getReason() == UpdateChecker.UpdateReason.NEW_UPDATE) {
+                logger.warning("You're not on the latest version of Response!");
+                logger.warning("It's highly recommended downloading the " +
+                        "latest version at https://www.spigotmc.org/resources/97614/!");
+            } else if (updateResult.getReason() == UpdateChecker.UpdateReason.UP_TO_DATE) {
+                logger.warning("You're using the latest version of Response!");
+            }
+        });
 
         // loading our responses
         this.repository.load();
