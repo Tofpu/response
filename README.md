@@ -37,10 +37,15 @@ __Example__: `$test:another response, yeet!` modifies `our new response, wooo!` 
 __Follow this format__: `!yourIdentifier`  
 __Example__: `!test` deletes a response that is associated as `test`. 
 
+## What are the permissions?
+To create a response, you'd need `response.register`  
+To modify a response, you'd need `response.modify`  
+To delete a response, you'd need `response.delete`  
+
 ---
 
 ## To-Do List:
-[x] PlaceholderAPI Support
+[x] PlaceholderAPI Support  
 [-] Customizable prefixes  
 [-] An option to auto-trigger a response once it detects an identifier  
 [-] Reloadable responses?  
