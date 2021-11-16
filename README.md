@@ -12,7 +12,7 @@ __Have you ever felt frustrated answering your player's common questions, over a
 You can join my discord at `https://discord.gg/rjks6D5Ynq`!
 
 ## How to get started?
-1. Download the latest version of Response at [releases](/releases).
+1. Download the latest version of Response.
 2. Drag & Drop / Upload the Response Plugin to your /plugins folder.
 3. Restart the server & Hop into your server, ensure that you're either opped or have the "response.create" permission node.
 4. Type `#test:our test placeholder` to create a __brand new response__ *identified* 
