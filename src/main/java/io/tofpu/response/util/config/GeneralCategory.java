@@ -1,5 +1,6 @@
 package io.tofpu.response.util.config;
 
+import org.bukkit.Bukkit;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Comment;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
@@ -18,10 +19,6 @@ public class GeneralCategory {
         this.enableDebugMessages = enableDebugMessages;
     }
 
-    @Setting("enable-papi-support")
-    @Comment("If enabled, it'll allow you to use PlaceholderAPI placeholders")
-    private boolean enablePapiSupport = true;
-
     @Setting("automatic-response")
     @Comment("If enabled, the plugin will automatically attempt to respond to a message " +
             "that is associated with any of the loaded responses")
@@ -35,6 +32,24 @@ public class GeneralCategory {
         this.automaticResponse = automaticResponse;
         return this;
     }
+
+    @Setting("server-name")
+    @Comment("Your server name. this will be used as a prefix by the " +
+            "automatic-response feature.")
+    private String serverName = Bukkit.getServerName();
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public GeneralCategory setServerName(final String serverName) {
+        this.serverName = serverName;
+        return this;
+    }
+
+    @Setting("enable-papi-support")
+    @Comment("If enabled, it'll allow you to use PlaceholderAPI placeholders")
+    private boolean enablePapiSupport = true;
 
     public boolean isPAPISupportEnabled() {
         return this.enablePapiSupport;
