@@ -22,6 +22,20 @@ public class GeneralCategory {
     @Comment("If enabled, it'll allow you to use PlaceholderAPI placeholders")
     private boolean enablePapiSupport = true;
 
+    @Setting("automatic-reply")
+    @Comment("If enabled, the plugin will automatically reply to a message " +
+            "that is associated with any of the loaded responses")
+    private boolean automaticReply = false;
+
+    public boolean isAutomaticReplyEnabled() {
+        return this.automaticReply;
+    }
+
+    public GeneralCategory setAutomaticReply(final boolean automaticReply) {
+        this.automaticReply = automaticReply;
+        return this;
+    }
+
     public boolean isPAPISupportEnabled() {
         return this.enablePapiSupport;
     }

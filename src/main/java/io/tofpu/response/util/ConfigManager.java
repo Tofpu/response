@@ -1,5 +1,6 @@
 package io.tofpu.response.util;
 
+import io.tofpu.response.util.config.GeneralCategory;
 import io.tofpu.response.util.config.MyConfiguration;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
@@ -50,6 +51,10 @@ public class ConfigManager {
 
     public MyConfiguration getConfiguration() {
         return this.configuration;
+    }
+
+    public GeneralCategory getGeneralCategory() {
+        return this.configuration.getGeneralCategory();
     }
 
     public void save() {
