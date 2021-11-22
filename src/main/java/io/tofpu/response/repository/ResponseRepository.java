@@ -14,6 +14,7 @@ import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 public final class ResponseRepository {
@@ -123,6 +124,15 @@ public final class ResponseRepository {
         }
         // returning the response associated with the identifier from our map
         return Optional.ofNullable(this.responses.get(identifier));
+    }
+
+    public Optional<Response> findResponseBy(final Predicate<String> filter) {
+        for (final Response response : this.responses.values()) {
+            if (filter.test(response.getIdentifier())) {
+                return Optional.of(response);
+            }
+        }
+        return Optional.empty();
     }
 
     public void flush(final boolean async) {
