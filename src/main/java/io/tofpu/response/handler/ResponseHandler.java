@@ -3,23 +3,24 @@ package io.tofpu.response.handler;
 import io.tofpu.response.object.Response;
 import io.tofpu.response.repository.ResponseRepository;
 import io.tofpu.response.util.ChatUtility;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.Optional;
-import java.util.SplittableRandom;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class ResponseHandler {
     private final static String PERMISSION_NODE = "response.";
     private final static String REGISTRATION_INVALID_FORMAT = "&cInvalid " + "format. Please follow the format: &4#identifier:response!";
-    private final static String REGISTRATION_FAILURE = "&cAn attempt to " + "register \"%s\" response has failed. Check your console for further details.";
-    private final static String REGISTRATION_SUCCESSFUL = "&eYou have " + "successfully registered &6\"%s\" &eresponse!";
+    private final static String REGISTRATION_FAILURE = "&cAn attempt to register \"%s\" response has failed. Check your console for further details.";
+    private final static String REGISTRATION_SUCCESSFUL = "&eYou have successfully registered &6\"%s\" &eresponse!";
 
-    private final static String MODIFICATION_SUCCESSFUL = "&eYou have " + "successfully modified &6\"%s\" &eresponse!";
-    private final static String MODIFICATION_INVALID_FORMAT = "&cInvalid " + "format. Please follow the format: &4$identifier:newResponse";
+    private final static String MODIFICATION_SUCCESSFUL = "&eYou have successfully modified &6\"%s\" &eresponse!";
+    private final static String MODIFICATION_INVALID_FORMAT = "&cInvalid format. Please follow the format: &4$identifier:newResponse";
 
-    private final static String DELETION_SUCCESSFUL = "&eYou have " + "successfully deleted &6\"%s\" &eresponse";
+    private final static String DELETION_SUCCESSFUL = "&eYou have successfully deleted &6\"%s\" &eresponse";
+
+    private final static String AUTOMATIC_RESPONSE_PREFIX = "&c[AUTOMATIC -RESPONSE] %s";
 
     private final ResponseRepository repository;
 
@@ -58,6 +59,9 @@ public class ResponseHandler {
                 break;
             case DELETE:
                 deleteResponse(event, args);
+                break;
+            case AUTOMATIC_RESPONSE:
+                automaticResponse(event, content.split(" "));
                 break;
         }
     }
@@ -139,6 +143,36 @@ public class ResponseHandler {
         player.sendMessage(ChatUtility.colorize(String.format(DELETION_SUCCESSFUL, identifier)));
     }
 
+    private void automaticResponse(final AsyncPlayerChatEvent event,
+            final String[] args) {
+        final Player player = event.getPlayer();
+
+        Optional<Response> responseValue = Optional.empty();
+
+        // looping throughout the message
+        for (final String arg : args) {
+            // attempting to filter out a response that is associated with
+            // one of the loaded responses
+            final Optional<Response> optionalResponse = repository.findResponseBy(arg::contains);
+            // if we found a response associated with the message, stop the
+            // for-loop!
+            if (optionalResponse.isPresent()) {
+                responseValue = optionalResponse;
+                break;
+            }
+        }
+
+        // if the message's content identifier isn't listed on the
+        // repository, return
+        if (!responseValue.isPresent()) {
+            return;
+        }
+
+        Bukkit.broadcastMessage(ChatUtility.colorize(player, String.format(AUTOMATIC_RESPONSE_PREFIX, responseValue
+                .get()
+                .getResponse())));
+    }
+
     public ResponseRepository getRepository() {
         return repository;
     }
@@ -173,7 +207,7 @@ public class ResponseHandler {
     }
 
     public enum ResponseOperationType {
-        REGISTER, RETRIEVE, MODIFY, DELETE;
+        REGISTER, RETRIEVE, MODIFY, DELETE, AUTOMATIC_RESPONSE;
 
         public boolean hasPermission(final Player player) {
             switch (this) {
