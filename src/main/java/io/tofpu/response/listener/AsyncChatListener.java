@@ -4,7 +4,6 @@ import io.tofpu.response.handler.ResponseHandler;
 import io.tofpu.response.util.ConfigManager;
 import io.tofpu.response.util.Logger;
 import io.tofpu.response.util.config.GeneralCategory;
-import io.tofpu.response.util.config.MyConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -26,7 +25,7 @@ public final class AsyncChatListener implements Listener {
                 .substring(0, 1);
         // if the message is empty, or the message's length is lower than 2,
         // set it to empty, otherwise; format the message appropriately
-        final String content = prefix.isEmpty() ? "" : formatMessage(message);
+        final String content = prefix.isEmpty() ? message : formatMessage(message);
 
         Logger.debug(message);
         Logger.debug(content);
@@ -71,7 +70,16 @@ public final class AsyncChatListener implements Listener {
 
     private String formatMessage(String message) {
         for (final String prefix : PREFIXES) {
-            message = message.replaceFirst(prefix, "");
+            // attempting to get the first prefix from provided message
+            final String currentPrefix = message.substring(0, 1);
+            // if our first character from our message doesn't contain the
+            // said prefix from our for-loop, continue!
+            if (!currentPrefix.contains(prefix)) {
+                continue;
+            }
+            // replacing our message's prefix with a message that contains no
+            // prefix
+            message = message.replace(currentPrefix, currentPrefix.replace(prefix, ""));
         }
         return message;
     }
