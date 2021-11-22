@@ -3,6 +3,7 @@ package io.tofpu.response.handler;
 import io.tofpu.response.object.Response;
 import io.tofpu.response.repository.ResponseRepository;
 import io.tofpu.response.util.ChatUtility;
+import io.tofpu.response.util.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -20,7 +21,7 @@ public class ResponseHandler {
 
     private final static String DELETION_SUCCESSFUL = "&eYou have successfully deleted &6\"%s\" &eresponse";
 
-    private final static String AUTOMATIC_RESPONSE_PREFIX = "&c[AUTOMATIC -RESPONSE] %s";
+    private final static String AUTOMATIC_RESPONSE_PREFIX = "&f&l[%s] %s";
 
     private final ResponseRepository repository;
 
@@ -167,10 +168,13 @@ public class ResponseHandler {
         if (!responseValue.isPresent()) {
             return;
         }
+        final String serverName = ConfigManager.getInstance()
+                .getGeneralCategory()
+                .getServerName();
 
-        Bukkit.broadcastMessage(ChatUtility.colorize(player, String.format(AUTOMATIC_RESPONSE_PREFIX, responseValue
+        ChatUtility.scheduleBroadcastMessage(player, String.format(AUTOMATIC_RESPONSE_PREFIX, serverName, responseValue
                 .get()
-                .getResponse())));
+                .getResponse()), 1L);
     }
 
     public ResponseRepository getRepository() {
