@@ -15,10 +15,9 @@ public class ChatUtility {
     }
 
     public static String colorize(final Player player, final String content) {
-        final String formattedContent = colorize(content);
         if (!supportPlaceholderAPI || player == null) {
-            return formattedContent;
+            return colorize(content);
         }
-        return PlaceholderAPI.setPlaceholders(player, formattedContent);
+        return colorize(PlaceholderAPI.setPlaceholders(player, content));
     }
 }

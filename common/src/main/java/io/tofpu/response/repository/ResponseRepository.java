@@ -215,7 +215,7 @@ public final class ResponseRepository {
             return;
         }
         final String identifier = response.getIdentifier();
-        final File file = new File(directory, identifier + ".yml");
+        final File file = new File(directory, identifier + ".conf");
         if (file.exists() && !file.delete()) {
             this.logger.debug(String.format(DELETION_FAILURE, identifier));
 //            Logger.debug(String.format(DELETION_FAILURE, identifier));

@@ -15,11 +15,6 @@ public class EventProvider extends AbstractEventProvider {
     }
 
     @Override
-    public String rawContent() {
-        return this.content;
-    }
-
-    @Override
     public String formattedContent() {
         return this.formattedContent;
     }
