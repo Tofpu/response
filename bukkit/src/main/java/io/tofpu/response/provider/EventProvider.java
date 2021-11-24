@@ -4,13 +4,15 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class EventProvider extends AbstractEventProvider {
     private final AsyncPlayerChatEvent event;
+    private final String formattedContent;
 
-    public static EventProvider of(final AsyncPlayerChatEvent event) {
-        return new EventProvider(event);
+    public static EventProvider of(final AsyncPlayerChatEvent event, final String formattedContent) {
+        return new EventProvider(event, formattedContent);
     }
 
-    private EventProvider(final AsyncPlayerChatEvent event) {
+    private EventProvider(final AsyncPlayerChatEvent event, final String formattedContent) {
         this.event = event;
+        this.formattedContent = formattedContent;
     }
 
     @Override
@@ -19,8 +21,8 @@ public class EventProvider extends AbstractEventProvider {
     }
 
     @Override
-    public String content() {
-        return this.event.getMessage();
+    public String formattedContent() {
+        return this.formattedContent;
     }
 
     @Override

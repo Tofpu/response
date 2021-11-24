@@ -24,10 +24,10 @@ public final class AsyncChatListener implements Listener {
                 .substring(0, 1);
         // if the message is empty, or the message's length is lower than 2,
         // set it to empty, otherwise; ignore the first given character
-        final String content = prefix.isEmpty() ? "" : message.substring(1);
+        final String formattedContent = prefix.isEmpty() ? "" : message.substring(1);
 
         Logger.debug(message);
-        Logger.debug(content);
+        Logger.debug(formattedContent);
 
         // our operation type
         final ResponseHandler.ResponseOperationType operationType;
@@ -52,7 +52,7 @@ public final class AsyncChatListener implements Listener {
             default: // unrelated, go on!
                 return;
         }
-        final EventProvider eventProvider = EventProvider.of(event);
+        final EventProvider eventProvider = EventProvider.of(event, formattedContent);
 
         // if the given player doesn't have the appropriate permission, return
         if (!operationType.hasPermission(eventProvider.getUserProvider())) {

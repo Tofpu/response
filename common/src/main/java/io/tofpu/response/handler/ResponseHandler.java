@@ -28,7 +28,7 @@ public class ResponseHandler {
     public void response(final ResponseOperation operation) {
         final ResponseOperationType type = operation.getType();
         final AbstractEventProvider event = operation.getEvent();
-        final String content = event.content();
+        final String content = event.formattedContent();
 
         final AbstractUserProvider player = event.getUserProvider();
         // splitting the content to our appropriate format
