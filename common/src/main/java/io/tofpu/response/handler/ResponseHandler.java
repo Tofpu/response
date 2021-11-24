@@ -5,7 +5,6 @@ import io.tofpu.response.provider.AbstractEventProvider;
 import io.tofpu.response.provider.AbstractUserProvider;
 import io.tofpu.response.repository.ResponseRepository;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 public class ResponseHandler {
@@ -37,9 +36,9 @@ public class ResponseHandler {
         // more checks
         if (type == ResponseOperationType.REGISTER || type == ResponseOperationType.MODIFY) {
             event.setCancelled(true);
-            // if the args length is lower than the required args (1), return
-            System.out.println(Arrays.toString(args));
-            if (args.length < 1) {
+
+            // if the args length is lower than the required args (identifier:response), return
+            if (args.length <= 1) {
                 player.sendMessage(type == ResponseOperationType.REGISTER ? REGISTRATION_INVALID_FORMAT : MODIFICATION_INVALID_FORMAT);
                 return;
             }
@@ -175,8 +174,7 @@ public class ResponseHandler {
                 case REGISTER:
                 case MODIFY:
                 case DELETE:
-                    return true;
-//                    return player.hasPermission(PERMISSION_NODE + this.name());
+                    return player.hasPermission(PERMISSION_NODE + this.name());
                 default:
                     return true;
             }

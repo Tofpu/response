@@ -31,7 +31,7 @@ public final class ResponseRepository {
     private final static String DELETION_UNKNOWN = "Attempted to delete a null response. Impossible!";
     private final static String DELETION_FAILURE = "Failed to delete %s response file!";
 
-    private final static String OUTDATED_FILE_EXTENSION = "We discovered an old file in your response folder. Download the ResponseTransformer plugin from Spigot to get your %s file working!";
+    private final static String OUTDATED_FILE_EXTENSION = "We discovered an old file in your response folder. Download the ResponseTransformer plugin from Spigot to get your outdated files working!";
 
     private final static Pattern PATTERN = Pattern.compile("^[A-Za-z0-9_-]*$");
 
@@ -73,7 +73,7 @@ public final class ResponseRepository {
 
             if (!this.detectedYml && fileExtension.equals("yml")) {
                 this.detectedYml = true;
-                this.logger.warn(String.format(OUTDATED_FILE_EXTENSION, identifier));
+                this.logger.warn(OUTDATED_FILE_EXTENSION);
                 continue;
             }
 

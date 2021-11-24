@@ -27,6 +27,6 @@ public class EventProvider extends AbstractEventProvider {
 
     @Override
     public AbstractUserProvider getUserProvider() {
-        return UserProvider.of(this.event.getPlayer());
+        return UserProvider.of(this.event.getPlayer(), this.event);
     }
 }
