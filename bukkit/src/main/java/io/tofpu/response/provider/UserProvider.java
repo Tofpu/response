@@ -16,5 +16,8 @@ public class UserProvider extends AbstractUserProvider {
     @Override
     public void sendMessage(final String message) {
         this.player.sendMessage(message);
+    @Override
+    public boolean hasPermission(final String node) {
+        return this.player.hasPermission(node);
     }
 }
