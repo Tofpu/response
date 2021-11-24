@@ -1,16 +1,15 @@
-package io.tofpu.response.object.repository;
+package io.tofpu.response.repository;
 
-import io.tofpu.response.object.Response;
-import io.tofpu.response.util.Logger;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import io.tofpu.response.Response;
+import io.tofpu.response.provider.AbstractLoggerProvider;
+import org.spongepowered.configurate.ConfigurateException;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
+import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -19,7 +18,8 @@ import java.util.regex.Pattern;
 public final class ResponseRepository {
     private final static int UPDATE_INTERVAL = 5;
     private final static String DIRECTORY = "response";
-    private final static String RESPONSE_PATH = "settings.response";
+    private final static String[] OLD_RESPONSE_PATH = {"settings", "response"};
+    private final static String[] RESPONSE_PATH = {"settings", "content"};
 
     private final static String EMPTY_IDENTIFIER = "Attempted to register a response with no given/unknown identifier!";
     private final static String EMPTY_RESPONSE = "Attempted to register an \"%s\" response with an empty response!";
@@ -31,14 +31,21 @@ public final class ResponseRepository {
     private final static String DELETION_UNKNOWN = "Attempted to delete a null response. Impossible!";
     private final static String DELETION_FAILURE = "Failed to delete %s response file!";
 
+    private final static String OUTDATED_FILE_EXTENSION = "We discovered an old file in your response folder. Download the ResponseTransformer plugin from Spigot to get your %s file working!";
+
     private final static Pattern PATTERN = Pattern.compile("^[A-Za-z0-9_-]*$");
 
+    private final AbstractLoggerProvider logger;
     private final File parent, directory;
     private final Map<String, Response> responses;
     private final Timer timer;
+
+    private boolean detectedYml = false;
     private boolean startup = true;
 
-    public ResponseRepository(final File parent) {
+    public ResponseRepository(final AbstractLoggerProvider abstractLoggerProvider,
+            final File parent) {
+        this.logger = abstractLoggerProvider;
         this.parent = parent;
         this.directory = new File(parent, DIRECTORY);
         this.responses = new ConcurrentHashMap<>();
@@ -62,21 +69,42 @@ public final class ResponseRepository {
 
         for (final File file : this.directory.listFiles()) {
             final String identifier = file.getName();
-            // if the file name doesn't end with .yml, skip
-            if (!identifier.endsWith(".yml")) {
+            final String fileExtension = file.getName().split("\\.")[1].replace("//.", "");
+
+            if (!this.detectedYml && fileExtension.equals("yml")) {
+                this.detectedYml = true;
+                this.logger.warn(String.format(OUTDATED_FILE_EXTENSION, identifier));
                 continue;
             }
 
-            final FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-            final String response = configuration.getString(RESPONSE_PATH);
+            // if the file name doesn't end with .yml, skip
+            if (fileExtension.isEmpty() || !fileExtension.contains("conf")) {
+                continue;
+            }
 
-            // if the response is empty, skip
-            if (response.isEmpty()) {
+            final HoconConfigurationLoader loader = HoconConfigurationLoader.builder()
+                    .file(file)
+                    .build();
+            final ConfigurationNode node;
+            try {
+                node = loader.load();
+            } catch (ConfigurateException e) {
+                this.logger.warn("Failed to load " + identifier + ": " + e.getMessage());
+                if (e.getCause() != null) {
+                    e.getCause().printStackTrace();
+                }
+                continue;
+            }
+
+            final String response = node.node(RESPONSE_PATH).getString();
+
+            // if the response is null, skip
+            if (response == null) {
                 continue;
             }
 
             // attempt to register the response data
-            register(identifier.replace(".yml", ""), response);
+            register(identifier.replace("." + fileExtension, ""), response);
         }
         this.startup = false;
     }
@@ -85,18 +113,21 @@ public final class ResponseRepository {
         // if the identifier is null or empty, throw an error & return null
         if (identifier == null || identifier.isEmpty() || !PATTERN.matcher(identifier)
                 .matches()) {
-            Logger.warn(EMPTY_IDENTIFIER);
+            this.logger.warn(EMPTY_IDENTIFIER);
+//            Logger.warn(EMPTY_IDENTIFIER);
             return null;
         } else if (content == null || content.isEmpty()) { // if the provided
             // content is null or empty, throw an error & return null
-            Logger.warn(String.format(EMPTY_RESPONSE, identifier));
+            this.logger.warn(String.format(EMPTY_RESPONSE, identifier));
+//            Logger.warn(String.format(EMPTY_RESPONSE, identifier));
             return null;
         }
 
         // if the response that associates with the identifier is already
         // present, pop out a warning and return null
         if (findResponseBy(identifier).isPresent()) {
-            Logger.warn(String.format(REGISTRATION_TWICE, identifier));
+            this.logger.warn(String.format(REGISTRATION_TWICE, identifier));
+//            Logger.warn(String.format(REGISTRATION_TWICE, identifier));
             return null;
         }
 
@@ -110,7 +141,8 @@ public final class ResponseRepository {
         // status
         if (this.startup) {
             // success attempt log
-            Logger.log(String.format(RESPONSE_LOADED, identifier));
+            this.logger.log(String.format(RESPONSE_LOADED, identifier));
+//            Logger.log(String.format(RESPONSE_LOADED, identifier));
         }
 
         return response;
@@ -141,18 +173,36 @@ public final class ResponseRepository {
         // TODO: flush the data to their own dedicated file code here...
         for (final Response response : this.responses.values()) {
             // create our decicated file for the response data
-            final File file = new File(this.directory, response.getIdentifier() + ".yml");
+            final File file = new File(this.directory,
+                    response.getIdentifier() + ".conf");
             // load an instance of YamlConfiguration to set our data
-            final FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+            final HoconConfigurationLoader loader = HoconConfigurationLoader.builder()
+                    .file(file)
+                    .prettyPrinting(true)
+                    .build();
+            final ConfigurationNode node;
+            try {
+                node = loader.load();
+            } catch (ConfigurateException e) {
+                e.printStackTrace();
+                continue;
+            }
 
             // set the path with our given response
-            configuration.set(RESPONSE_PATH, response.getResponse());
+            try {
+                node.node(RESPONSE_PATH).set(response.getResponse());
+//                node.node("settings", "response").set(response.getResponse());
+            } catch (SerializationException e) {
+                e.printStackTrace();
+            }
             try {
                 // save the changes
-                configuration.save(file);
+                loader.save(node);
             } catch (IllegalArgumentException | IOException e) {
-                Logger.warn(String.format(FLUSH_FAILURE, response
+                this.logger.warn(String.format(FLUSH_FAILURE, response
                         .getIdentifier()));
+//                Logger.warn(String.format(FLUSH_FAILURE, response
+//                        .getIdentifier()));
                 e.printStackTrace();
             }
         }
@@ -160,13 +210,15 @@ public final class ResponseRepository {
 
     public void delete(final Response response) {
         if (response == null) {
-            Logger.debug(DELETION_UNKNOWN);
+            this.logger.debug(DELETION_UNKNOWN);
+//            Logger.debug(DELETION_UNKNOWN);
             return;
         }
         final String identifier = response.getIdentifier();
         final File file = new File(directory, identifier + ".yml");
         if (file.exists() && !file.delete()) {
-            Logger.debug(String.format(DELETION_FAILURE, identifier));
+            this.logger.debug(String.format(DELETION_FAILURE, identifier));
+//            Logger.debug(String.format(DELETION_FAILURE, identifier));
         }
 
         this.responses.remove(identifier, response);

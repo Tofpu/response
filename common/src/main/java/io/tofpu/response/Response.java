@@ -1,15 +1,13 @@
-package io.tofpu.response.object;
+package io.tofpu.response;
 
-import io.tofpu.response.util.ChatUtility;
-
-public final class Response {
+public class Response {
     // The following variables are not final due to being subject to change.
     private String identifier;
     private String response;
 
     public Response(final String identifier, final String response) {
         this.identifier = identifier;
-        this.response = ChatUtility.colorize(response);
+        this.response = response;
     }
 
     public void setIdentifier(final String identifier) {

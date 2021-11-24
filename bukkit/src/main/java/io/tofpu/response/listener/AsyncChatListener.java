@@ -1,16 +1,18 @@
 package io.tofpu.response.listener;
 
-import io.tofpu.response.object.handler.ResponseHandler;
+import io.tofpu.response.handler.ResponseHandler;
+import io.tofpu.response.manager.ResponseService;
+import io.tofpu.response.provider.EventProvider;
 import io.tofpu.response.util.Logger;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public final class AsyncChatListener implements Listener {
-    private final ResponseHandler handler;
+    private final ResponseService responseService;
 
-    public AsyncChatListener(final ResponseHandler handler) {
-        this.handler = handler;
+    public AsyncChatListener(final ResponseService responseService) {
+        this.responseService = responseService;
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -50,16 +52,17 @@ public final class AsyncChatListener implements Listener {
             default: // unrelated, go on!
                 return;
         }
+        final EventProvider eventProvider = EventProvider.of(event);
 
         // if the given player doesn't have the appropriate permission, return
-        if (!operationType.hasPermission(event.getPlayer())) {
+        if (!operationType.hasPermission(eventProvider.getUserProvider())) {
             return;
         }
 
-        this.handler.response(ResponseHandler.ResponseOperation.of(operationType, event, content));
+        this.responseService.response(ResponseHandler.ResponseOperation.of(operationType, eventProvider));
     }
 
-    public ResponseHandler getHandler() {
-        return this.handler;
+    public ResponseService getResponseService() {
+        return this.responseService;
     }
 }

@@ -1,8 +1,8 @@
 package io.tofpu.response;
 
 import io.tofpu.response.listener.AsyncChatListener;
-import io.tofpu.response.object.handler.ResponseHandler;
-import io.tofpu.response.object.repository.ResponseRepository;
+import io.tofpu.response.manager.ResponseService;
+import io.tofpu.response.provider.LoggerProvider;
 import io.tofpu.response.util.ChatUtility;
 import io.tofpu.response.config.manager.ConfigManager;
 import io.tofpu.response.util.Logger;
@@ -13,12 +13,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class ResponsePlugin extends JavaPlugin {
-    private final ResponseHandler handler;
-    private final ResponseRepository repository;
+    private final ResponseService responseService;
 
     public ResponsePlugin() {
-        this.repository = new ResponseRepository(getDataFolder());
-        this.handler = new ResponseHandler(this.repository);
+        this.responseService = new ResponseService(new LoggerProvider(), getDataFolder());
     }
 
     @Override
@@ -44,7 +42,7 @@ public final class ResponsePlugin extends JavaPlugin {
         });
 
         // loading our responses
-        this.repository.load();
+        this.responseService.load();
 
         final ConfigManager configManager = ConfigManager.getInstance();
         // loading our config
@@ -68,16 +66,16 @@ public final class ResponsePlugin extends JavaPlugin {
 
         // start listening to chat event
         Bukkit.getPluginManager()
-                .registerEvents(new AsyncChatListener(this.handler), this);
+                .registerEvents(new AsyncChatListener(this.responseService), this);
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        this.repository.flush(false);
+        this.responseService.flush(false);
     }
 
-    public ResponseRepository getRepository() {
-        return this.repository;
+    public ResponseService getResponseService() {
+        return this.responseService;
     }
 }

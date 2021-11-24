@@ -1,11 +1,11 @@
-package io.tofpu.response.object.handler;
+package io.tofpu.response.handler;
 
-import io.tofpu.response.object.Response;
-import io.tofpu.response.object.repository.ResponseRepository;
-import io.tofpu.response.util.ChatUtility;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import io.tofpu.response.Response;
+import io.tofpu.response.provider.AbstractEventProvider;
+import io.tofpu.response.provider.AbstractUserProvider;
+import io.tofpu.response.repository.ResponseRepository;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 public class ResponseHandler {
@@ -19,18 +19,18 @@ public class ResponseHandler {
 
     private final static String DELETION_SUCCESSFUL = "&eYou have " + "successfully deleted &6\"%s\" &eresponse";
 
-    private final ResponseRepository repository;
+    private final ResponseRepository responseRepository;
 
-    public ResponseHandler(final ResponseRepository repository) {
-        this.repository = repository;
+    public ResponseHandler(final ResponseRepository responseRepository) {
+        this.responseRepository = responseRepository;
     }
 
     public void response(final ResponseOperation operation) {
         final ResponseOperationType type = operation.getType();
-        final AsyncPlayerChatEvent event = operation.getEvent();
-        final String content = operation.getContent();
+        final AbstractEventProvider event = operation.getEvent();
+        final String content = event.content();
 
-        final Player player = event.getPlayer();
+        final AbstractUserProvider player = event.getUserProvider();
         // splitting the content to our appropriate format
         final String[] args = content.split(":");
         // if the operationType does not equal to Register or Modify, include
@@ -38,8 +38,9 @@ public class ResponseHandler {
         if (type == ResponseOperationType.REGISTER || type == ResponseOperationType.MODIFY) {
             event.setCancelled(true);
             // if the args length is lower than the required args (1), return
-            if (args.length <= 1) {
-                player.sendMessage(ChatUtility.colorize(type == ResponseOperationType.REGISTER ? REGISTRATION_INVALID_FORMAT : MODIFICATION_INVALID_FORMAT));
+            System.out.println(Arrays.toString(args));
+            if (args.length < 1) {
+                player.sendMessage(type == ResponseOperationType.REGISTER ? REGISTRATION_INVALID_FORMAT : MODIFICATION_INVALID_FORMAT);
                 return;
             }
         }
@@ -60,11 +61,11 @@ public class ResponseHandler {
         }
     }
 
-    private void retrieveResponse(final AsyncPlayerChatEvent event,
+    private void retrieveResponse(final AbstractEventProvider event,
             final String[] args) {
         final String identifier = args[0];
         // trying to retrieve a response out of the message's content
-        final Optional<Response> response = repository.findResponseBy(identifier);
+        final Optional<Response> response = responseRepository.findResponseBy(identifier);
 
         // if the message's content identifier isn't listed on the
         // repository, return
@@ -74,36 +75,37 @@ public class ResponseHandler {
 
         // replacing the ?identifier with our given response associated with
         // the identifier
-        event.setMessage(ChatUtility.colorize(event.getPlayer(),
-                response.get().getResponse()));
+        event.getUserProvider().sendMessage(response.get().getResponse());
+//        event.setMessage(ChatUtility.colorize(event.getUserProvider(),
+//                response.get().getResponse()));
     }
 
-    private void createResponse(final AsyncPlayerChatEvent event,
+    private void createResponse(final AbstractEventProvider event,
             final String[] args, final String content) {
         // format: identifier:response -- array: 0:1
         // example: discord:&eYou can join our discord at https:://www.discord.com
 
-        final Player player = event.getPlayer();
+        final AbstractUserProvider player = event.getUserProvider();
         final String identifier = args[0];
         final String response = content.replace(identifier + ":", "");
 
         // attempting to register the response
-        if (this.repository.register(identifier, response) == null) {
-            player.sendMessage(ChatUtility.colorize(String.format(REGISTRATION_FAILURE, identifier)));
+        if (this.responseRepository.register(identifier, response) == null) {
+            player.sendMessage(String.format(REGISTRATION_FAILURE, identifier));
         } else {
-            player.sendMessage(ChatUtility.colorize(String.format(REGISTRATION_SUCCESSFUL, identifier)));
+            player.sendMessage(String.format(REGISTRATION_SUCCESSFUL, identifier));
         }
     }
 
-    private void modifyResponse(final AsyncPlayerChatEvent event,
+    private void modifyResponse(final AbstractEventProvider event,
             final String[] args) {
-        final Player player = event.getPlayer();
+        final AbstractUserProvider player = event.getUserProvider();
         final String identifier = args[0];
         final String response = args[1];
 
         // attempting to retrieve a response out of the message's content
         final Optional<Response> value =
-                repository.findResponseBy(identifier);
+                responseRepository.findResponseBy(identifier);
 
         // if the message's content identifier isn't listed on the
         // repository, return
@@ -113,17 +115,17 @@ public class ResponseHandler {
             value.get().setResponse(response);
         }
 
-        player.sendMessage(ChatUtility.colorize(String.format(MODIFICATION_SUCCESSFUL, identifier)));
+        player.sendMessage(String.format(MODIFICATION_SUCCESSFUL, identifier));
     }
 
-    private void deleteResponse(final AsyncPlayerChatEvent event,
+    private void deleteResponse(final AbstractEventProvider event,
             final String[] args) {
-        final Player player = event.getPlayer();
+        final AbstractUserProvider player = event.getUserProvider();
         final String identifier = args[0];
 
         // attempting to retrieve a response out of the message's content
         final Optional<Response> value =
-                repository.findResponseBy(identifier);
+                responseRepository.findResponseBy(identifier);
 
         // if the message's content identifier isn't listed on the
         // repository, return
@@ -133,36 +135,31 @@ public class ResponseHandler {
             event.setCancelled(true);
         }
         // attempt to delete the response from our map & file
-        repository.delete(value.get());
-        player.sendMessage(ChatUtility.colorize(String.format(DELETION_SUCCESSFUL, identifier)));
+        responseRepository.delete(value.get());
+        player.sendMessage(String.format(DELETION_SUCCESSFUL, identifier));
     }
 
-    public ResponseRepository getRepository() {
-        return repository;
+    public ResponseRepository getResponseRepository() {
+        return responseRepository;
     }
 
     public static class ResponseOperation {
         private final ResponseOperationType type;
-        private final AsyncPlayerChatEvent event;
-        private final String content;
+        private final AbstractEventProvider event;
 
         public static ResponseOperation of(final ResponseOperationType type,
-                final AsyncPlayerChatEvent event, final String content) {
-            return new ResponseOperation(type, event, content);
+                final AbstractEventProvider event) {
+            return new ResponseOperation(type, event);
         }
 
-        private ResponseOperation(final ResponseOperationType type, final AsyncPlayerChatEvent event, final String content) {
+        private ResponseOperation(final ResponseOperationType type,
+                final AbstractEventProvider event) {
             this.type = type;
             this.event = event;
-            this.content = content;
         }
 
-        public AsyncPlayerChatEvent getEvent() {
+        public AbstractEventProvider getEvent() {
             return event;
-        }
-
-        public String getContent() {
-            return content;
         }
 
         private ResponseOperationType getType() {
@@ -173,12 +170,13 @@ public class ResponseHandler {
     public enum ResponseOperationType {
         REGISTER, RETRIEVE, MODIFY, DELETE;
 
-        public boolean hasPermission(final Player player) {
+        public boolean hasPermission(final AbstractUserProvider player) {
             switch (this) {
                 case REGISTER:
                 case MODIFY:
                 case DELETE:
-                    return player.hasPermission(PERMISSION_NODE + this.name());
+                    return true;
+//                    return player.hasPermission(PERMISSION_NODE + this.name());
                 default:
                     return true;
             }
