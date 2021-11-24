@@ -32,7 +32,7 @@ public class ResponseApplication {
     public void registerResponse() {
         final ResponseHandler.ResponseOperation responseOperation = ResponseHandler.ResponseOperation
                 .of(ResponseHandler.ResponseOperationType.REGISTER,
-                        new EventProvider("test:our-response"));
+                        new EventProvider("#test:our-response", "test:our-response"));
 
         responseService.response(responseOperation);
     }
@@ -40,7 +40,7 @@ public class ResponseApplication {
     public void receiveResponse() {
         final ResponseHandler.ResponseOperation responseOperation = ResponseHandler.ResponseOperation
                 .of(ResponseHandler.ResponseOperationType.RETRIEVE,
-                        new EventProvider("test"));
+                        new EventProvider("?test", "test"));
 
         responseService.response(responseOperation);
     }
@@ -48,7 +48,7 @@ public class ResponseApplication {
     public void modifyResponse() {
         final ResponseHandler.ResponseOperation responseOperation = ResponseHandler.ResponseOperation
                 .of(ResponseHandler.ResponseOperationType.MODIFY,
-                        new EventProvider("test:our newly modified response"));
+                        new EventProvider("$test:our newly modified response", "test:our newly modified response"));
 
         responseService.response(responseOperation);
     }
@@ -56,7 +56,7 @@ public class ResponseApplication {
     public void deleteResponse() {
         final ResponseHandler.ResponseOperation responseOperation = ResponseHandler.ResponseOperation
                 .of(ResponseHandler.ResponseOperationType.DELETE,
-                        new EventProvider("test"));
+                        new EventProvider("!test", "test"));
 
         responseService.response(responseOperation);
     }
