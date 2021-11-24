@@ -1,14 +1,12 @@
-package io.tofpu.response.handler;
+package io.tofpu.response.object.handler;
 
 import io.tofpu.response.object.Response;
-import io.tofpu.response.repository.ResponseRepository;
+import io.tofpu.response.object.repository.ResponseRepository;
 import io.tofpu.response.util.ChatUtility;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.Optional;
-import java.util.SplittableRandom;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class ResponseHandler {
     private final static String PERMISSION_NODE = "response.";

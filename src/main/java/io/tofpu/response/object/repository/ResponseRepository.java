@@ -1,4 +1,4 @@
-package io.tofpu.response.repository;
+package io.tofpu.response.object.repository;
 
 import io.tofpu.response.object.Response;
 import io.tofpu.response.util.Logger;

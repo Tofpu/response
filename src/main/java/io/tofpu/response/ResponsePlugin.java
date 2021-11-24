@@ -1,13 +1,13 @@
 package io.tofpu.response;
 
 import io.tofpu.response.listener.AsyncChatListener;
-import io.tofpu.response.handler.ResponseHandler;
-import io.tofpu.response.repository.ResponseRepository;
+import io.tofpu.response.object.handler.ResponseHandler;
+import io.tofpu.response.object.repository.ResponseRepository;
 import io.tofpu.response.util.ChatUtility;
-import io.tofpu.response.util.ConfigManager;
+import io.tofpu.response.config.manager.ConfigManager;
 import io.tofpu.response.util.Logger;
 import io.tofpu.response.util.UpdateChecker;
-import io.tofpu.response.util.config.GeneralCategory;
+import io.tofpu.response.config.category.GeneralCategory;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;

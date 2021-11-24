@@ -1,6 +1,7 @@
-package io.tofpu.response.util;
+package io.tofpu.response.config.manager;
 
-import io.tofpu.response.util.config.MyConfiguration;
+import io.tofpu.response.config.MyConfiguration;
+import io.tofpu.response.util.Logger;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.hocon.HoconConfigurationLoader;

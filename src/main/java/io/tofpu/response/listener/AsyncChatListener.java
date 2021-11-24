@@ -1,6 +1,6 @@
 package io.tofpu.response.listener;
 
-import io.tofpu.response.handler.ResponseHandler;
+import io.tofpu.response.object.handler.ResponseHandler;
 import io.tofpu.response.util.Logger;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

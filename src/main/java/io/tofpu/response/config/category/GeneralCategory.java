@@ -1,4 +1,4 @@
-package io.tofpu.response.util.config;
+package io.tofpu.response.config.category;
 
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Comment;

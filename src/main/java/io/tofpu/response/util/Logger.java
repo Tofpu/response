@@ -1,5 +1,7 @@
 package io.tofpu.response.util;
 
+import io.tofpu.response.config.manager.ConfigManager;
+
 public final class Logger {
     private static java.util.logging.Logger logger;
 
