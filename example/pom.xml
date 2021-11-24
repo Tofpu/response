@@ -21,13 +21,13 @@
         <artifactId>response</artifactId>
         <version>1.0.1</version>
     </parent>
-    <artifactId>example</artifactId>
+    <artifactId>response-example</artifactId>
     <version>1.0.1</version>
 
     <dependencies>
         <dependency>
             <groupId>io.tofpu</groupId>
-            <artifactId>common</artifactId>
+            <artifactId>response-common</artifactId>
             <version>1.0.1</version>
         </dependency>
     </dependencies>

@@ -8,7 +8,7 @@
         <artifactId>response</artifactId>
         <version>1.0.1</version>
     </parent>
-    <artifactId>common</artifactId>
+    <artifactId>response-common</artifactId>
     <version>1.0.1</version>
 
     <build>
