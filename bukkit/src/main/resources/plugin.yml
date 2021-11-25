@@ -6,3 +6,4 @@ description: A simple, lightweight response plugin which you can utilize to writ
 api-version: 1.13
 softdepend:
   - PlaceholderAPI
+  - ResponseMigrationTool

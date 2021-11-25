@@ -17,6 +17,7 @@
     <modules>
         <module>common</module>
         <module>bukkit</module>
+        <module>migration-hocon</module>
         <module>example</module>
     </modules>
 </project>
