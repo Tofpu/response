@@ -1,21 +1,15 @@
-name: Manual Release
+name: Release
 
 on:
-  workflow_dispatch:
-    inputs:
-      release-tag:
-        description: 'v1.0.0'
-        required: true
-      path:
-        description: 'target/name-here-*.jar'
-        required: true
+  release:
+    types: [published]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2.4.0
-    - name: Set up JDK 1.11
+    - name: Set up JDK 8
       uses: actions/setup-java@v2
       with:
         distribution: 'adopt'
@@ -25,6 +19,5 @@ jobs:
     - name: Upload jar
       uses: AButler/upload-release-assets@v2.0
       with:
-        release-tag: ${{ github.event.inputs.release-tag }}
-        files: ${{ github.event.inputs.path }}
+        files: 'bukkit/target/response-bukkit-*.jar'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
