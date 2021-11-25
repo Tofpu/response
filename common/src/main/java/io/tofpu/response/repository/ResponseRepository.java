@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 public final class ResponseRepository {
     private final static int UPDATE_INTERVAL = 5;
     private final static String DIRECTORY = "response";
-    private final static String[] OLD_RESPONSE_PATH = {"settings", "response"};
     private final static String[] RESPONSE_PATH = {"settings", "content"};
 
     private final static String EMPTY_IDENTIFIER = "Attempted to register a response with no given/unknown identifier!";
